@@ -170,21 +170,27 @@ if CLIENT then
 		if IsValid(self.Owner) and not(IsValid(self.PigeonModel)) and !self.IsEmpty then
 			self.PigeonModel = ents.CreateClientProp("models/pigeon.mdl")
 			--local Pos, Ang = self.Owner:GetBonePosition(self.Owner:LookupBone("ValveBiped.Bip01_R_Hand"))
-			local Hand = self.Owner:GetAttachment(self.Owner:LookupAttachment("anim_attachment_rh"))
-			local Pos, Ang = Hand.Pos, Hand.Ang
-			self.PigeonModel:SetRenderOrigin(Pos)
-			self.PigeonModel:SetRenderAngles(Ang)
-			self.PigeonModel:AddEffects(EF_BONEMERGE)
-			self.PigeonModel:SetParent(self.Owner)
+			local Hand = self.Owner:LookupAttachment("anim_attachment_rh")
+			if Hand then
+				Hand = self.Owner:GetAttachment(Hand)
+				local Pos, Ang = Hand.Pos, Hand.Ang
+				self.PigeonModel:SetRenderOrigin(Pos)
+				self.PigeonModel:SetRenderAngles(Ang)
+				self.PigeonModel:AddEffects(EF_BONEMERGE)
+				self.PigeonModel:SetParent(self.Owner)
+			end
 		end
 
 		if (IsValid(self.PigeonModel) and IsValid(self.Owner)) then
 			--local Pos, Ang = self.Owner:GetBonePosition(self.Owner:LookupBone("ValveBiped.Bip01_R_Hand"))
-			local Hand = self.Owner:GetAttachment(self.Owner:LookupAttachment("anim_attachment_rh"))
-			local Pos, Ang = Hand.Pos, Hand.Ang
-			Ang:RotateAroundAxis(Ang:Forward(), -100)
-			self.PigeonModel:SetRenderOrigin(Pos)
-			self.PigeonModel:SetRenderAngles(Ang)
+			local Hand = self.Owner:LookupAttachment("anim_attachment_rh")
+			if Hand then
+				Hand = self.Owner:GetAttachment(Hand)
+				local Pos, Ang = Hand.Pos, Hand.Ang
+				Ang:RotateAroundAxis(Ang:Forward(), -100)
+				self.PigeonModel:SetRenderOrigin(Pos)
+				self.PigeonModel:SetRenderAngles(Ang)
+			end
 		end
 	end
 
