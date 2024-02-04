@@ -157,13 +157,18 @@ if CLIENT then
 				end
 			elseif(IsValid(self.Pigeon)) then
 				local VM = self.Owner:GetViewModel()
-				local BP, BA = VM:GetBonePosition(VM:LookupBone("ValveBiped.Bip01_R_Hand"))
-				BP = BP - BA:Forward() * 3 - BA:Up() * 6 - BA:Right() * 4
-				self.Pigeon:SetPos(BP)
-				BA:RotateAroundAxis(BA:Right(), -60)
-				BA:RotateAroundAxis(BA:Forward(), 180)
-				self.Pigeon:SetAngles(BA)
-				self.Pigeon:SetParent(VM)
+				local boneId = VM:LookupBone("ValveBiped.Bip01_R_Hand")
+				if boneId then
+    					local BP, BA = VM:GetBonePosition(boneId)
+					BP = BP - BA:Forward() * 3 - BA:Up() * 6 - BA:Right() * 4
+					self.Pigeon:SetPos(BP)
+					BA:RotateAroundAxis(BA:Right(), -60)
+					BA:RotateAroundAxis(BA:Forward(), 180)
+					self.Pigeon:SetAngles(BA)
+					self.Pigeon:SetParent(VM)
+				else
+					return					
+				end
 			end
 		end
 	end
