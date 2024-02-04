@@ -108,7 +108,9 @@ if SERVER then
 	end
 
 	net.Receive("SendTargetPigeon", function(len,ply)
-		if ply:GetActiveWeapon():GetClass() == "swep_homingpigeon" then
+		if !IsValid(ply) then return end
+		local activeWeapon = ply:GetActiveWeapon()
+		if IsValid(activeWeapon) and activeWeapon:GetClass() == "swep_homingpigeon" then
 			local TargetPly = net.ReadEntity()
 			local wep = ply:GetWeapon("swep_homingpigeon")
 			if (IsValid(ply) and IsValid(TargetPly)) then
