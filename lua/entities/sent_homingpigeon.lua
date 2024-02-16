@@ -74,8 +74,8 @@ function ENT:Explode()
 	local debug = GetConVar("ttt_hompigeon_show_debug"):GetBool()
 	local pos = self:GetPos()
 
-	if not self.Exploded then
-		self.Explosion:Explode(self, pos, baseDamage, radius, self.Owner, ents.Create("swep_homingpigeon"), "Explosion", debug)
+	if !self.Exploded then
+		self.Explosion:Explode(self, pos, baseDamage, radius, self:GetOwner(), ents.Create("swep_homingpigeon"), "Explosion", debug)
 		self.Exploded = true
 	end
 end
