@@ -80,15 +80,15 @@ end
 
 function SWEP:OnRemove()
 	if CLIENT then
-		if IsValid(self.Owner) and self.Owner == LocalPlayer() and self.Owner:Alive() then
+		if IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() and self:GetOwner():Alive() then
 			RunConsoleCommand("lastinv")
 		end
-		RemovePigeonModel(self.Weapon)
+		RemovePigeonModel(self)
 	end
 end
 
 function SWEP:Holster()
-	RemovePigeonModel(self.Weapon)
+	RemovePigeonModel(self)
 	return true
 end
 
@@ -99,12 +99,12 @@ if SERVER then
 
 	function SWEP:OnDrop()
 		net.Start("DropPigeon")
-		net.WriteEntity(self.Weapon)
+		net.WriteEntity(self)
 		net.Broadcast()
 	end
 
 	function SWEP:Equip()
-		self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+		self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 	end
 
 	net.Receive("SendTargetPigeon", function(len,ply)
@@ -136,14 +136,14 @@ if CLIENT then
 	util.PrecacheModel("models/pigeon.mdl") 
 
 	function SWEP:OwnerChanged()
-		if self.Owner ~= nil then
+		if self:GetOwner() ~= nil then
 			self:RemoveWorldModel()
 		end
 	end
 
 	function SWEP:ViewModelDrawn()
 		local VM = LocalPlayer():GetViewModel()
-		if (IsValid(VM) and IsValid(self.Owner) and LocalPlayer() == self.Owner)then
+		if (IsValid(VM) and IsValid(self:GetOwner()) and LocalPlayer() == self:GetOwner())then
 			if (!IsValid(self.Pigeon) and !self.IsEmpty) then
 				self.Pigeon = ents.CreateClientProp("models/pigeon.mdl")
 				local I = 0
@@ -156,7 +156,7 @@ if CLIENT then
 					self.BoneCountManipulated = bones
 				end
 			elseif(IsValid(self.Pigeon)) then
-				local VM = self.Owner:GetViewModel()
+				local VM = self:GetOwner():GetViewModel()
 				local boneId = VM:LookupBone("ValveBiped.Bip01_R_Hand")
 				if boneId then
     					local BP, BA = VM:GetBonePosition(boneId)
@@ -174,29 +174,33 @@ if CLIENT then
 	end
 
 	function SWEP:DrawWorldModel()
-		if IsValid(self.Owner) and not(IsValid(self.PigeonModel)) and !self.IsEmpty then
+		if IsValid(self:GetOwner()) and !(IsValid(self.PigeonModel)) and !self.IsEmpty then
 			self.PigeonModel = ents.CreateClientProp("models/pigeon.mdl")
-			--local Pos, Ang = self.Owner:GetBonePosition(self.Owner:LookupBone("ValveBiped.Bip01_R_Hand"))
-			local Hand = self.Owner:LookupAttachment("anim_attachment_rh")
+			--local Pos, Ang = self:GetOwner():GetBonePosition(self:GetOwner():LookupBone("ValveBiped.Bip01_R_Hand"))
+			local Hand = self:GetOwner():LookupAttachment("anim_attachment_RH")
 			if Hand then
-				Hand = self.Owner:GetAttachment(Hand)
-				local Pos, Ang = Hand.Pos, Hand.Ang
-				self.PigeonModel:SetRenderOrigin(Pos)
-				self.PigeonModel:SetRenderAngles(Ang)
-				self.PigeonModel:AddEffects(EF_BONEMERGE)
-				self.PigeonModel:SetParent(self.Owner)
+				Hand = self:GetOwner():GetAttachment(Hand)
+				if Hand then
+					local Pos, Ang = Hand.Pos, Hand.Ang
+					self.PigeonModel:SetRenderOrigin(Pos)
+					self.PigeonModel:SetRenderAngles(Ang)
+					self.PigeonModel:AddEffects(EF_BONEMERGE)
+					self.PigeonModel:SetParent(self:GetOwner())
+				end
 			end
 		end
 
-		if (IsValid(self.PigeonModel) and IsValid(self.Owner)) then
-			--local Pos, Ang = self.Owner:GetBonePosition(self.Owner:LookupBone("ValveBiped.Bip01_R_Hand"))
-			local Hand = self.Owner:LookupAttachment("anim_attachment_rh")
+		if (IsValid(self.PigeonModel) and IsValid(self:GetOwner())) then
+			--local Pos, Ang = self:GetOwner():GetBonePosition(self:GetOwner():LookupBone("ValveBiped.Bip01_R_Hand"))
+			local Hand = self:GetOwner():LookupAttachment("anim_attachment_RH")
 			if Hand then
-				Hand = self.Owner:GetAttachment(Hand)
-				local Pos, Ang = Hand.Pos, Hand.Ang
-				Ang:RotateAroundAxis(Ang:Forward(), -100)
-				self.PigeonModel:SetRenderOrigin(Pos)
-				self.PigeonModel:SetRenderAngles(Ang)
+				Hand = self:GetOwner():GetAttachment(Hand)
+				if Hand then
+					local Pos, Ang = Hand.Pos, Hand.Ang
+					Ang:RotateAroundAxis(Ang:Forward(), -100)
+					self.PigeonModel:SetRenderOrigin(Pos)
+					self.PigeonModel:SetRenderAngles(Ang)
+				end
 			end
 		end
 	end
@@ -205,7 +209,7 @@ if CLIENT then
 		if !self:CanPrimaryAttack() then 
 			return 
 		end
-		local TargetPly = self.Owner:GetEyeTrace().Entity
+		local TargetPly = self:GetOwner():GetEyeTrace().Entity
 		if IsValid(TargetPly) and TargetPly:IsPlayer() then
 			self:TakePrimaryAmmo(1)
 			if self:Clip1() <= 0 then
