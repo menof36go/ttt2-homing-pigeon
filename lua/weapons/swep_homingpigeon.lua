@@ -4,7 +4,7 @@ if SERVER then
   util.AddNetworkString("DropPigeon")
   util.AddNetworkString("RemovePigeon")
   util.AddNetworkString("SendTargetPigeon")
-  resource.AddWorkshop("620936792")
+  resource.AddWorkshop("1894982220")
 end
 
 SWEP.HoldType = "grenade"
